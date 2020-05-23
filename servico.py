@@ -3,32 +3,36 @@ import socket,psutil,pickle
 # AF_INET = IPv4
 # SOCK_STREAM = TCP
 host = socket.gethostname()
-porta = 9999
+porta = 9991
+# Usado para TCP
 servidor = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
 
+# Usado para UDP muda
+# servidor = socket.socket(socket.AF_INET,socket.SOCK_DGRAM)
 servidor.bind((host, porta))
-# Escutar concexao
+# Escutar concexao usado para TCP
 servidor.listen()
 print((f"Servidor {host} experando conexao na porta {porta}"))
-
-(cliente, endreco) = servidor.accept()
-print(f"Conectando a {str(endreco)}")
+# Arquivo a ser enviado
+disco = psutil.disk_usage('/')
+disco_lista = {'Disco Total': (disco.total / 1024 ** 3, "GB"), 'Disco Usado': (disco.used / 1024 ** 3,"GB"), 'Disco Livre': (disco.free / 1024 ** 3,"GB")}
 
 while True :
-    # Receber a conexao do cliente
-    mens = cliente.recv(4)
-    # Terminar a conxao
-    if mens.decode('utf-8') == 'Fim de Programa !':
-        break
-    resposta = []
-    disco = psutil.disk_usage('/')
-    disco_livre = disco.free / 1024 ** 3, 2
-    disco_total = disco.total / 1024 ** 3, 2
-    resposta.append(disco_livre)
-    resposta.append(disco_total)
+    # Receber a conexao do cliente TCP
+    (cliente, endereco) = servidor.accept()
+    print(f"Conectando a {str(endereco)}")
     # Converter uma lista para bytes
-    bytes = pickle.dump(resposta)
-    cliente.send(bytes)
+    informacao_bytes = pickle.dumps(disco_lista)
+    # Enviar informação para o cliente
+    cliente.send(informacao_bytes)
+
+    # Terminar a conxao, agora quem recebe a mensagem e o servidor do cliente
+    msg = cliente.recv(4)
+    if msg.decode('utf-8') == 'fim':
+        print(msg)
+        break
+    # Enviar a mensagem de encerramento
+    cliente.send(msg)
 
 cliente.close()
 servidor.close()
