@@ -23,9 +23,8 @@ try:
         #  Abrir o arquivo de destino:
         nome_arquivo_download = f"download-{nome_arquivo}"
         arquivo = open(nome_arquivo_download, 'wb')
-        # 6.2 Receber os bytes do servidor:
+        # Receber os bytes do servidor:
         bytes = cliente.recv(4096)
-
         while bytes:
             #  Escrever o arquivo:
             arquivo.write(bytes)
@@ -33,9 +32,10 @@ try:
             #  Receber mais bytes:
             bytes = cliente.recv(4096)
         # Fechar o arquivo
+        # 11 Questao
         print(f"Download do arquivo {nome_arquivo_download} ({tamanho/1024:>.2f} KB) realizado com sucesso.")
         arquivo.close()
     else:
-        print(f"Arquivo {nome_arquivo} não encontrado no servidor {servidor}...")
+        print(f"Arquivo {nome_arquivo} {tamanho} não encontrado no servidor {servidor}...")
 except Exception as erro:
     print(str(erro))
