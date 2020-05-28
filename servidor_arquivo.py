@@ -40,5 +40,3 @@ while True:
         cliente.send('-1'.encode('utf-8'))
     # Fechar o socket do cliente
     cliente.close()
-# Fechar o socket do servidor
-servidor.close()

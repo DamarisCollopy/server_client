@@ -29,7 +29,9 @@ while True :
     # Terminar a conxao, agora quem recebe a mensagem e o servidor do cliente
     msg = cliente.recv(4)
     if msg.decode('utf-8') == 'fim':
-        print(msg)
+        msg = "Programa encerrado"
+        fim = pickle.dumps(msg)
+        cliente.send(fim)
         break
     # Enviar a mensagem de encerramento
     cliente.send(msg)
